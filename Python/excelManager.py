@@ -3,12 +3,12 @@ import openpyxl
 class ExcelManager:
 
     @staticmethod
-    def OpenBook(bookName: str) -> openpyxl.Workbook:
+    def open_book(bookName: str) -> openpyxl.Workbook:
         book = openpyxl.open(f"Excels/{bookName}.xlsx")
         return book
 
     @staticmethod
-    def CreateBook(bookName: str) -> openpyxl.Workbook:
+    def create_book(bookName: str) -> openpyxl.Workbook:
         book = openpyxl.Workbook()
         book.save(f"Excels/{bookName}.xlsx")
         return book
@@ -20,7 +20,7 @@ class ExcelManager:
         # file_path - Имя файла
 
         # Открываем файл Excel
-        wb = ExcelManager.OpenBook(bookName)
+        wb = ExcelManager.open_book(bookName)
 
         # Выбираем активный лист
         sheet = wb.active

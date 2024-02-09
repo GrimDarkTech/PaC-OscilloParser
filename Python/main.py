@@ -2,63 +2,81 @@ from fileParser import FileParser
 from probabilityTheory import ProbabilityTheory
 from dataAnalyser import DataAnalyzer
 from excelManager import ExcelManager
+from threadsManager import ThreadManager
 
-print("Enter the number of files to analyze:")
-filesNumber = int(input())
 
-print("Show graphs for each file? (y/n)")
-isShowPlot = input()
-if(isShowPlot.lower() == "y"):
-        isShowPlot = True
-else:
-    isShowPlot = False
-print("Save graphs for each file? (y/n)")
-isSavePlot = input()
-if(isSavePlot.lower() == "y"):
-    isSavePlot = True
-else:
-    isSavePlot = False
+def Main(file_number):
+    file_info = FileParser.parse(file_number)
 
-for i in range(0, filesNumber):
-
-    fileInfo = FileParser.Parse(i)
-
-    values = fileInfo[0]
-    timeStep = fileInfo[1]
+    values = file_info[0]
+    time_step = file_info[1]
 
     mathematical_expectation = ProbabilityTheory.calculate_mathematical_expectation(values)
     square_deviation = ProbabilityTheory.calculate_square_deviation(values)
 
-    truncateValues = DataAnalyzer.truncatData(values, mathematical_expectation, square_deviation, timeStep)
+    truncate_values = DataAnalyzer.truncat_data(values, mathematical_expectation, square_deviation, time_step)
     
-    values = truncateValues[0]
-    startTime = truncateValues[1]
-    endTime = truncateValues[2]
+    values = truncate_values[0]
+    start_time = truncate_values[1]
+    end_time = truncate_values[2]
 
-    extremumsIndexes = DataAnalyzer.extremumsIndexSearch(values)
-    minsIndexes = extremumsIndexes[0]
-    maxIndexes = extremumsIndexes[1]
+    extremums_indexes = DataAnalyzer.extremums_index_search(values)
+    mins_indexes = extremums_indexes[0]
+    maxes_indexes = extremums_indexes[1]
     
-    minmax = DataAnalyzer.getExtremumsValues(values, minsIndexes, maxIndexes)
-    minsValues = minmax[0]
-    maxsValues = minmax[1]
+    minmax = DataAnalyzer.get_extremums_values(values, mins_indexes, maxes_indexes)
+    mins_values = minmax[0]
+    maxs_values = minmax[1]
     
-    minmaxTimes = DataAnalyzer.getExtremumsTimes(minsIndexes, maxIndexes, timeStep, startTime)
+    minmaxTimes = DataAnalyzer.get_extremums_times(mins_indexes, maxes_indexes, time_step, start_time)
     minsTimes = minmaxTimes[0]
     maxsTimes = minmaxTimes[1]
 
-    DataAnalyzer.drawPlot(values, timeStep, drawMin=True, drawMax=True, minsIndexes=minsIndexes, maxesIndexes=maxIndexes, showPlot = isShowPlot, savePlot = isSavePlot, fileName = f"Plot{i}")
+    DataAnalyzer.draw_plot(values, time_step, mins_indexes=mins_indexes, maxes_indexes=maxes_indexes, is_show_plot=is_show_plot, 
+                              is_save_plot=is_save_plot, file_name = f"Plot{file_number}")
     
-    wb = ExcelManager.CreateBook(f"Result{i}")
-    ExcelManager.write_to_excel(f"Result{i}", "Математическое ожидание", [mathematical_expectation], 1)
-    ExcelManager.write_to_excel(f"Result{i}", "Среднеквадратическое отклонение", [square_deviation], 2)
-    ExcelManager.write_to_excel(f"Result{i}", "Время начала переходного процесса", [startTime], 3)
-    ExcelManager.write_to_excel(f"Result{i}", "Время окончания переходного процесса", [endTime], 4)
-    ExcelManager.write_to_excel(f"Result{i}", "Длительность переходного процесса", [endTime - startTime], 5)
-    ExcelManager.write_to_excel(f"Result{i}", "Локальные минимумы процесса", minsValues, 6)
-    ExcelManager.write_to_excel(f"Result{i}", "Время локальных минимумов процесса", minsTimes, 7)
-    ExcelManager.write_to_excel(f"Result{i}", "Локальные максимумы процесса", maxsValues, 8)
-    ExcelManager.write_to_excel(f"Result{i}", "Время локальных максимумов процесса", maxsTimes, 9)
-    print(f"Data has been successfully uploaded to Excels/Result{i}.xlsx") 
+    wb = ExcelManager.create_book(f"Result{file_number}")
+    ExcelManager.write_to_excel(f"Result{file_number}", "Математическое ожидание", [mathematical_expectation], 1)
+    ExcelManager.write_to_excel(f"Result{file_number}", "Среднеквадратическое отклонение", [square_deviation], 2)
+    ExcelManager.write_to_excel(f"Result{file_number}", "Время начала переходного процесса", [start_time], 3)
+    ExcelManager.write_to_excel(f"Result{file_number}", "Время окончания переходного процесса", [end_time], 4)
+    ExcelManager.write_to_excel(f"Result{file_number}", "Длительность переходного процесса", [end_time - start_time], 5)
+    ExcelManager.write_to_excel(f"Result{file_number}", "Локальные минимумы процесса", mins_values, 6)
+    ExcelManager.write_to_excel(f"Result{file_number}", "Время локальных минимумов процесса", minsTimes, 7)
+    ExcelManager.write_to_excel(f"Result{file_number}", "Локальные максимумы процесса", maxs_values, 8)
+    ExcelManager.write_to_excel(f"Result{file_number}", "Время локальных максимумов процесса", maxsTimes, 9)
+    print(f"Data has been successfully uploaded to Excels/Result{file_number}.xlsx") 
+
+
+print("Enter the number of files to analyze:")
+number_of_files = int(input())
+
+print("Show graphs for each file? (y/n)")
+is_show_plot = input()
+if(is_show_plot.lower() == "y"):
+        is_show_plot = True
+else:
+    is_show_plot = False
+    
+print("Save graphs for each file? (y/n)")
+is_save_plot = input()
+if(is_save_plot.lower() == "y"):
+    is_save_plot = True
+else:
+    is_save_plot = False
+
+if(is_show_plot):
+    for i in range(0, number_of_files):
+        DataAnalyzer.set_plot_backend("TkAgg")
+        Main(i)
+else:    
+    DataAnalyzer.set_plot_backend("Agg")
+    for i in range(0, number_of_files):
+        ThreadManager.create_thread(Main, i)
+        
+    ThreadManager.start_threads()
+
+    ThreadManager.wait_for_threads()
+    
 
 input("Press Enter to exit")
