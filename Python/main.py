@@ -1,7 +1,7 @@
-from FileParserPy import FileParser
+from fileParser import FileParser
 from probabilityTheory import ProbabilityTheory
-from MinMax import DataAnalyzer
-from Manager_exel import ExcelManager
+from dataAnalyser import DataAnalyzer
+from excelManager import ExcelManager
 
 print("Enter the number of files to analyze:")
 filesNumber = int(input())
