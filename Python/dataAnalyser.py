@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plot
 import matplotlib
 
+matplotlib.use("TkAgg")
 
 class DataAnalyzer:
     """Сlass that implements methods for processing arrays of data"""
@@ -83,11 +84,11 @@ class DataAnalyzer:
         if(is_save_plot):
             plot.title(file_name)
             plot.savefig(f"Plots/{file_name}.pdf")
-            plot.close()
             print(f"Plot image has been successfully uploaded to Plots/{file_name}.pdf") 
         #Showing plot
         if(is_show_plot):
             plot.show()
+        plot.close()
         
     @staticmethod
     def truncat_data(values:list,mathematical_expectation:float,square_deviation:float, time_step: float) -> tuple:

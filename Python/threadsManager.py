@@ -7,8 +7,9 @@ class ThreadManager:
     treads = [] 
 
     @staticmethod
-    def create_thread(method, file_number):
-        thread = threading.Thread(target=method, kwargs={"file_number":file_number})
+    def create_thread(method, **kargs):
+        """"""
+        thread = threading.Thread(target=method, kwargs = kargs)
         ThreadManager.treads.append(thread)
 
     @staticmethod
