@@ -66,6 +66,7 @@ def main():
     print("Show graphs for each file? (y/n)")
     is_show_plot = input()
     if(is_show_plot.lower() == "y"):
+            DataAnalyzer.set_plot_backend("TkAgg")
             is_show_plot = True
     else:
         is_show_plot = False
@@ -77,16 +78,16 @@ def main():
     else:
         is_save_plot = False
     
-    DataAnalyzer.set_plot_backend("TkAgg")
+    
     for i in range(0, number_of_files):
         ThreadManager.create_thread(AnalyzeFiles, file_number = i)
         
     ThreadManager.start_threads()
 
     ThreadManager.wait_for_threads()
-        
+
     for plot in dataForPlots:
-        DataAnalyzer.draw_plot(plot[0], plot[1], mins_indexes=plot[2], maxes_indexes=plot[3], is_show_plot=is_show_plot, is_save_plot=is_save_plot, file_name=plot[4])
+        DataAnalyzer.draw_plot(plot[0], time_step = plot[1], mins_indexes=plot[2], maxes_indexes=plot[3], is_show_plot=is_show_plot, is_save_plot=is_save_plot, file_name=plot[4])
         
 
     input("Press Enter to exit")

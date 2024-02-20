@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plot
 import matplotlib
+import matplotlib.backends.backend_pdf
 
-matplotlib.use("TkAgg")
 
 class DataAnalyzer:
     """Сlass that implements methods for processing arrays of data"""
@@ -70,16 +70,18 @@ class DataAnalyzer:
         is_show_plot = kargs.get('is_show_plot', False)
         is_save_plot = kargs.get('is_save_plot', False)
         file_name = kargs.get('file_name', "0")
+        data_argument = kargs.get('data_argument', [])
 
         #Calculate time 
-        data_time = []
-        for i in range(0, len(data_values)):
-            data_time.append(i * time_step)
+        if(time_step != 0):
+            data_argument = []
+            for i in range(0, len(data_values)):
+                data_argument.append(i * time_step)
 
         #Draw maxina and minima
         plot.figure()
-        plot.plot(data_time, data_values, '-b', markevery=mins_indexes, marker=8, markerfacecolor='green', markeredgecolor='green')
-        plot.plot(data_time, data_values, '-b', markevery=maxes_indexes, marker=8, markerfacecolor='red', markeredgecolor='red')
+        plot.plot(data_argument, data_values, '-b', markevery=mins_indexes, marker=8, markerfacecolor='green', markeredgecolor='green')
+        plot.plot(data_argument, data_values, '-b', markevery=maxes_indexes, marker=8, markerfacecolor='red', markeredgecolor='red')
         #Saving plot to PDF
         if(is_save_plot):
             plot.title(file_name)
