@@ -71,6 +71,7 @@ class DataAnalyzer:
         is_save_plot = kargs.get('is_save_plot', False)
         file_name = kargs.get('file_name', "0")
         data_argument = kargs.get('data_argument', [])
+        scatters = kargs.get('scatters', 0)
 
         #Calculate time 
         if(time_step != 0):
@@ -82,6 +83,7 @@ class DataAnalyzer:
         plot.figure()
         plot.plot(data_argument, data_values, '-b', markevery=mins_indexes, marker=8, markerfacecolor='green', markeredgecolor='green')
         plot.plot(data_argument, data_values, '-b', markevery=maxes_indexes, marker=8, markerfacecolor='red', markeredgecolor='red')
+        plot.axvline(x = scatters, color='green', linestyle='--')
         #Saving plot to PDF
         if(is_save_plot):
             plot.title(file_name)
@@ -96,19 +98,27 @@ class DataAnalyzer:
     def truncat_data(values:list,mathematical_expectation:float,square_deviation:float, time_step: float) -> tuple:
         """Returns truncated list of values that go beyond the mathematical expectation of the +-square deviation"""
         #Search for indexes of values beyond the standard deviation
-        indexs = []
+        process_indexes = []
+        process_time = 0
         for i in range (0, len(values)):
             if values[i] > mathematical_expectation + square_deviation or values[i] < mathematical_expectation - square_deviation:
-                indexs.append(i)
+                process_indexes.append(i)
+
         #Removing values that are remote from the cluster
-        for i in range (0, len(indexs)):
-            if indexs[1]-indexs[0] > 5:
-                indexs.pop(0)
+        for i in range (0, len(process_indexes)):
+            if process_indexes[1]-process_indexes[0] > 5:
+                process_indexes.pop(0)
 
         trunced_values = []
-        for i in range (indexs[0], indexs[len(indexs)-1]):
+        for i in range (process_indexes[0], process_indexes[len(process_indexes)-1]):
             trunced_values.append(values[i])
-        start_time = indexs[0] * time_step
-        end_time = indexs[len(indexs)-1] * time_step
-        return (trunced_values, start_time, end_time)
+        start_time = process_indexes[0] * time_step
+        end_time = process_indexes[len(process_indexes)-1] * time_step
+
+        for i in range(0, len(process_indexes)):
+            if values[i] < mathematical_expectation + mathematical_expectation * 0.05 or values[i] > mathematical_expectation - mathematical_expectation * 0.05:
+                process_time = i * time_step
+
+
+        return (trunced_values, start_time, end_time, process_time)
 

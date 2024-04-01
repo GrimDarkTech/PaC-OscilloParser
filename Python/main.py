@@ -24,6 +24,7 @@ def AnalyzeFiles(file_number):
     values = truncate_values[0]
     start_time = truncate_values[1]
     end_time = truncate_values[2]
+    process_time = truncate_values[3]
 
     #Searching for extremum indexes
     extremums_indexes = DataAnalyzer.extremums_index_search(values)
@@ -41,7 +42,7 @@ def AnalyzeFiles(file_number):
     maxsTimes = minmaxTimes[1]
 
     #Saving data to draw plots
-    dataForPlots.append((values, time_step, mins_indexes, maxes_indexes, f"Plot{file_number}"))
+    dataForPlots.append((values, time_step, mins_indexes, maxes_indexes, f"Plot{file_number}", process_time))
 
     #Writing result  with excel table
     wb = ExcelManager.create_book(f"Result{file_number}")
@@ -54,6 +55,7 @@ def AnalyzeFiles(file_number):
     ExcelManager.write_to_excel(f"Result{file_number}", "Время локальных минимумов процесса", minsTimes, 7)
     ExcelManager.write_to_excel(f"Result{file_number}", "Локальные максимумы процесса", maxs_values, 8)
     ExcelManager.write_to_excel(f"Result{file_number}", "Время локальных максимумов процесса", maxsTimes, 9)
+    ExcelManager.write_to_excel(f"Result{file_number}", "Постоянная времени", [process_time], 10)
     print(f"Data has been successfully uploaded to Excels/Result{file_number}.xlsx") 
 
 #Entry point
@@ -87,7 +89,7 @@ def main():
     ThreadManager.wait_for_threads()
 
     for plot in dataForPlots:
-        DataAnalyzer.draw_plot(plot[0], time_step = plot[1], mins_indexes=plot[2], maxes_indexes=plot[3], is_show_plot=is_show_plot, is_save_plot=is_save_plot, file_name=plot[4])
+        DataAnalyzer.draw_plot(plot[0], time_step = plot[1], mins_indexes=plot[2], maxes_indexes=plot[3], is_show_plot=is_show_plot, is_save_plot=is_save_plot, file_name=plot[4], scatters = plot[5])
         
 
     input("Press Enter to exit")
